@@ -89,7 +89,7 @@ app.post('/event', function(req, res) {
       } else {
         console.log('success!')
         //SAVING DATA TO DB
-        db.addTicketMasterToDataBase(results);
+        // db.addTicketMasterToDataBase(results);
         //GETTING ALL RESULTS SORTED FROM DB
       }
     });
@@ -115,7 +115,8 @@ app.post('/event', function(req, res) {
             if (err) {
               console.log(err);
             } else {
-              res.end(JSON.stringify([tmResponse].concat(results)));
+              console.log(JSON.stringify([tmResponse]).concat(results));
+              res.end(JSON.stringify([tmResponse]).concat(results));
             }
           });
       }
