@@ -28,14 +28,7 @@ testObj = {
 }
 
 
-seatGeekAPI.seatGeekGetter(seatGeekAPI.seatGeekData, testObj.event, testObj.location, function(err, results) {
-  if (err) {
-    console.log(err)
-  } else {
-    console.log('success!')
-    db.addTicketMasterToDataBase(results);
-  }
-})
+
 
 //retrieve data from the db, return to front-end
 
@@ -90,32 +83,61 @@ app.post('/event', function(req, res) {
     var userInput = JSON.parse(body);
     console.log('Post Request ', userInput);
 
-        //ticket master api query with
-    ticketMasterAPI.queryTicketMasterForEvent(ticketMasterAPI.ticketmasterData, userInput, function(err, data) {
-      // console.log("this is the event id ", ticketMasterAPI.ticketmasterData.id)
-      if(err) {
-        console.log('Error on query', err);
+    //GET SEATGEEK API DATA
+    seatGeekAPI.seatGeekGetter(seatGeekAPI.seatGeekData, userInput.event, userInput.location, function(err, results1) {
+      if (err) {
+        console.log(err)
       } else {
-        ticketMasterAPI.queryTicketMasterForPrices(ticketMasterAPI.ticketmasterData, ticketMasterAPI.ticketmasterData.id, function(err, data2) {
-          if(err) {
-            console.log('Error in Ticket Master Price query', err);
-          } else {
-            ticketMasterAPI.ticketmasterDataParser(ticketMasterAPI.ticketmasterData, JSON.parse(data2));
+        console.log('success!')
 
-            db.addTicketMasterToDataBase(ticketMasterAPI.ticketmasterData);
-            console.log(ticketMasterAPI.ticketmasterData)
+        //SAVING DATA TO DB
+        db.addTicketMasterToDataBase(results1);
 
-            var tmResponse = ticketMasterAPI.ticketmasterData;
+        //GETTING ALL RESULTS SORTED FROM DB
+          dataParser.seatGeekListCheck(userInput.event, userInput.location, function(err, results) {
+            if (err) {
+              console.log(err);
 
-            res.end(JSON.stringify([tmResponse]));
-          }
-        })
+            } else {
+              //START ticketMasterAPI
+              ticketMasterAPI.queryTicketMasterForEvent(ticketMasterAPI.ticketmasterData, userInput, function(err, data) {
+                // console.log("this is the event id ", ticketMasterAPI.ticketmasterData.id)
+                if(err) {
+                  console.log('Error on query', err);
+                } else {
+                  ticketMasterAPI.queryTicketMasterForPrices(ticketMasterAPI.ticketmasterData, ticketMasterAPI.ticketmasterData.id, function(err, data2) {
+                    if(err) {
+                      console.log('Error in Ticket Master Price query', err);
+                    } else {
+                      ticketMasterAPI.ticketmasterDataParser(ticketMasterAPI.ticketmasterData, JSON.parse(data2));
+
+                      db.addTicketMasterToDataBase(ticketMasterAPI.ticketmasterData);
+                      console.log(ticketMasterAPI.ticketmasterData)
+
+                      var tmResponse = ticketMasterAPI.ticketmasterData;
+
+
+                      
+                      res.end(JSON.stringify([tmResponse]));
+                    }
+                  })
+                }
+              });
+
+
+
+            }
+          });
       }
-    });
+    })
+
+
+
+        //ticket master api query with
   })
 })
 
-dataParser.seatGeekListCheck(testObj.event, testObj.location);
+
 
 app.get('/home', function(req, res) {
   // console.log('Get Request Recieved!')
