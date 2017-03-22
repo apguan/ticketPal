@@ -7,9 +7,11 @@ var seatGeekListCheck = function(searchParam, location, callback) {
   db.connection.query(queryStatement, function(err, results) {
     if (err) {
       callback(err, null);
+      console.log(err)
     } else {
       // console.log('dataparser info', results);
       callback(null, results);
+      console.log(results)
     }
   })
 

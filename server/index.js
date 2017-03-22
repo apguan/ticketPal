@@ -110,13 +110,18 @@ app.post('/event', function(req, res) {
 
             var tmResponse = ticketMasterAPI.ticketmasterData;
 
+
         //pull data from database
           dataParser.seatGeekListCheck(userInput.event, userInput.location, function(err, results) {
             if (err) {
               console.log(err);
             } else {
-              console.log(JSON.stringify([tmResponse]).concat(results));
-              res.end(JSON.stringify([tmResponse]).concat(results));
+              console.log('ALYS 1 ITEM:', tmResponse)
+              console.log('ALLENS ARRAY:', results);
+              var sendArr = results.unshift(tmResponse);
+              console.log('WHAT WE WANT COMBO', sendArr);
+              // console.log(JSON.stringify([tmResponse]).concat(results));
+              res.end(JSON.stringify(sendArr));
             }
           });
       }
