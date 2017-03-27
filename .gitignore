@@ -5,3 +5,5 @@ node_modules
 client/dist/bundle.js
 
 apiKeys.js
+
+server/.DS_Store
